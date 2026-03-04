@@ -1,0 +1,292 @@
+.livemap-container {
+  display: flex;
+  height: calc(100vh - 80px);
+  gap: 1rem;
+  padding: 1rem;
+  background-color: var(--bg-primary);
+}
+
+.map {
+  flex: 1;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+}
+
+/* Leaflet customization */
+.leaflet-control-attribution {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-secondary) !important;
+}
+
+.leaflet-control-zoom {
+  background-color: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.leaflet-control-zoom-in:hover,
+.leaflet-control-zoom-out:hover {
+  background-color: var(--accent) !important;
+  color: var(--bg-primary) !important;
+}
+
+/* Marker popup styling */
+.marker-popup {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  padding: 0;
+}
+
+.marker-popup h4 {
+  margin: 0.5rem 0;
+  color: var(--accent);
+  font-size: 0.95rem;
+}
+
+.marker-popup p {
+  margin: 0.25rem 0;
+  font-size: 0.85rem;
+}
+
+/* Pulsing animation for active markers */
+@keyframes pulse {
+  0% {
+    r: 15px;
+    opacity: 0.8;
+  }
+  50% {
+    r: 20px;
+    opacity: 0.5;
+  }
+  100% {
+    r: 15px;
+    opacity: 0.8;
+  }
+}
+
+.pulsing-marker {
+  animation: pulse 1.5s infinite !important;
+}
+
+/* Sidebar styling */
+.sidebar {
+  width: 320px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.sidebar-header {
+  padding: 1.5rem;
+  border-bottom: 2px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sidebar-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--accent);
+}
+
+.corridor-toggle {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.corridor-toggle:hover {
+  opacity: 0.9;
+}
+
+.sidebar-content {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  min-height: 150px;
+}
+
+.vehicle-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.info-item label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.info-item p {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  margin: 0;
+  font-weight: 500;
+}
+
+.info-item .eta {
+  color: var(--accent);
+  font-size: 1rem;
+}
+
+.info-item .status {
+  color: var(--success);
+  font-size: 1rem;
+}
+
+.no-vehicle {
+  text-align: center;
+  color: var(--text-secondary);
+  font-style: italic;
+  padding: 1rem 0;
+}
+
+/* Intersections list */
+.intersections-list {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  border-top: 1px solid var(--border-color);
+}
+
+.intersections-list h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.95rem;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.intersection-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.intersection-item:hover {
+  background-color: var(--bg-secondary);
+  border-color: var(--accent);
+}
+
+.intersection-status {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+}
+
+.intersection-item.status-normal .intersection-status {
+  background-color: var(--success);
+}
+
+.intersection-item.status-warning .intersection-status {
+  background-color: var(--warning);
+}
+
+.intersection-item.status-active .intersection-status {
+  background-color: var(--danger);
+  animation: pulse-small 1.5s infinite;
+}
+
+@keyframes pulse-small {
+  0%, 100% {
+    box-shadow: 0 0 0 0 var(--danger);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(255, 82, 82, 0.3);
+  }
+}
+
+.intersection-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.intersection-name {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.vehicle-count {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.75rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Scrollbar styling */
+.intersections-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.intersections-list::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+.intersections-list::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+.intersections-list::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .livemap-container {
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100vh - 80px);
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+
+  .map {
+    height: 400px;
+  }
+
+  .sidebar {
+    width: 100%;
+    max-height: 300px;
+  }
+
+  .sidebar-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

@@ -1,0 +1,10 @@
+#root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--bg-primary);
+}
+
+main {
+  flex: 1;
+  overflow: auto;

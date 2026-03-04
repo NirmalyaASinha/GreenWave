@@ -1,0 +1,227 @@
+.incident-log {
+  flex: 1;
+  overflow-y: auto;
+  background-color: var(--bg-primary);
+}
+
+.incident-log-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.incident-log-container h1 {
+  margin-bottom: 2rem;
+  color: var(--accent);
+  font-size: 2rem;
+}
+
+.log-controls {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.search-input,
+.filter-select {
+  flex: 1;
+  min-width: 200px;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  font-size: 0.95rem;
+}
+
+.search-input:focus,
+.filter-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0, 200, 83, 0.1);
+}
+
+.search-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.incidents-table-wrapper {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  overflow-x: auto;
+}
+
+.incidents-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.incidents-table thead {
+  background-color: var(--bg-primary);
+  border-bottom: 2px solid var(--accent);
+}
+
+.incidents-table th {
+  padding: 1rem;
+  text-align: left;
+  color: var(--accent);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.incidents-table tbody tr {
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s ease;
+}
+
+.incidents-table tbody tr:hover {
+  background-color: var(--bg-primary);
+}
+
+.incidents-table td {
+  padding: 1rem;
+  color: var(--text-primary);
+}
+
+.incident-id {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.timestamp {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.type {
+  font-weight: 500;
+}
+
+.severity-badge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+  color: white;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.location {
+  color: var(--text-secondary);
+}
+
+.vehicle {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.status-active {
+  background-color: rgba(255, 82, 82, 0.2);
+  color: var(--danger);
+}
+
+.status-badge.status-responded {
+  background-color: rgba(255, 152, 0, 0.2);
+  color: var(--warning);
+}
+
+.status-badge.status-resolved {
+  background-color: rgba(76, 175, 80, 0.2);
+  color: var(--success);
+}
+
+.description {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Row highlighting by severity */
+.incidents-table tbody tr.severity-critical {
+  border-left: 4px solid var(--danger);
+}
+
+.incidents-table tbody tr.severity-high {
+  border-left: 4px solid var(--warning);
+}
+
+.incidents-table tbody tr.severity-medium {
+  border-left: 4px solid var(--warning);
+}
+
+.incidents-table tbody tr.severity-low {
+  border-left: 4px solid var(--success);
+}
+
+/* Mobile Responsive */
+@media (max-width: 1024px) {
+  .incidents-table {
+    font-size: 0.85rem;
+  }
+
+  .incidents-table th,
+  .incidents-table td {
+    padding: 0.75rem;
+  }
+
+  .description {
+    max-width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .incident-log-container {
+    padding: 1rem;
+  }
+
+  .incident-log-container h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .log-controls {
+    flex-direction: column;
+  }
+
+  .search-input,
+  .filter-select {
+    min-width: 100%;
+  }
+
+  .incidents-table {
+    font-size: 0.75rem;
+  }
+
+  .incidents-table th,
+  .incidents-table td {
+    padding: 0.5rem;
+  }
+
+  .description {
+    display: none;
+  }
+
+  .incidents-table-wrapper {
+    max-height: 600px;
+  }
+}

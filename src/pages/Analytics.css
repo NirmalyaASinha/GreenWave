@@ -1,0 +1,138 @@
+.analytics-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0F2040 0%, #1A3560 100%);
+  padding: 2rem 1rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #fff;
+}
+
+.analytics-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  animation: pageSlideIn 0.4s ease-out;
+}
+
+.analytics-container h1 {
+  margin: 0 0 2rem 0;
+  font-size: 2rem;
+  color: #00C853;
+}
+
+.filter-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.filter-section label {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.filter-btn {
+  padding: 0.5rem 1rem;
+  background: rgba(26, 53, 96, 0.5);
+  border: 1px solid rgba(0, 200, 83, 0.2);
+  color: rgba(255, 255, 255, 0.7);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 500;
+}
+
+.filter-btn:hover {
+  border-color: rgba(0, 200, 83, 0.4);
+  background: rgba(26, 53, 96, 0.7);
+}
+
+.filter-btn.active {
+  background: linear-gradient(135deg, #00C853 0%, #00B847 100%);
+  border-color: #00C853;
+  color: #000;
+}
+
+.summary-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.summary-card {
+  background: rgba(15, 32, 64, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 200, 83, 0.2);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.summary-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #00C853;
+  margin-bottom: 0.5rem;
+}
+
+.summary-label {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.charts-grid {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+}
+
+.chart-card {
+  background: rgba(15, 32, 64, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 200, 83, 0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s;
+}
+
+.chart-card:hover {
+  border-color: rgba(0, 200, 83, 0.4);
+  background: rgba(15, 32, 64, 0.95);
+}
+
+.chart-card h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+@keyframes pageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .analytics-container h1 {
+    font-size: 1.5rem;
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-section {
+    grid-template-columns: 1fr;
+  }
+}
