@@ -18,6 +18,7 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig)
 export const database = firebaseConfig.databaseURL ? getDatabase(app) : null
 export const firestore = getFirestore(app)
+export const db = firestore  // Alias for firestore
 export const auth = getAuth(app)
 export const analytics =
   typeof window !== 'undefined'

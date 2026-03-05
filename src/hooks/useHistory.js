@@ -13,10 +13,17 @@ export function useHistory() {
       historyQuery,
       (snapshot) => {
         setHistory(
-          snapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          })),
+          snapshot.docs.map((doc) => {
+            const data = doc.data()
+            return {
+              id: doc.id,
+              ...data,
+              cun_lat: data.cun_lat ? Number(data.cun_lat) : undefined,
+              cun_lng: data.cun_lng ? Number(data.cun_lng) : undefined,
+              duration_min: data.duration_min ? Number(data.duration_min) : undefined,
+              time_saved_min: data.time_saved_min ? Number(data.time_saved_min) : undefined,
+            }
+          }),
         )
         setLoading(false)
         setError(null)

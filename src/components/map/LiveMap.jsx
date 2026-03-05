@@ -12,12 +12,15 @@ export default function LiveMap() {
   useEffect(() => {
     const requestsRef = collection(firestore, 'Request')
     const unsubscribe = onSnapshot(requestsRef, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })).filter(req => 
-        typeof req.cun_lat === 'number' && 
-        typeof req.cun_lng === 'number' &&
+      const data = snapshot.docs.map(doc => {
+        const docData = doc.data()
+        return {
+          id: doc.id,
+          ...docData,
+          cun_lat: Number(docData.cun_lat),
+          cun_lng: Number(docData.cun_lng)
+        }
+      }).filter(req => 
         !isNaN(req.cun_lat) && 
         !isNaN(req.cun_lng)
       )
@@ -88,6 +91,7 @@ export default function LiveMap() {
   return (
     <div style={{ height: '400px', borderRadius: '8px', overflow: 'hidden' }} id="live-map-container">
       <MapContainer
+        key="live-map"
         center={[23.0395, 72.583]}
         zoom={12}
         style={{ height: '100%', width: '100%' }}

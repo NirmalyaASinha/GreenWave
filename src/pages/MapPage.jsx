@@ -134,8 +134,9 @@ const MapPage = () => {
         </div>
       </motion.div>
 
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1 }} id="map-page-container">
         <MapContainer
+          key="map-page"
           center={[23.0395, 72.583]}
           zoom={12}
           style={{ height: '100%', width: '100%' }}

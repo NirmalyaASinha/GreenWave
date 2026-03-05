@@ -151,7 +151,7 @@ export default function RequestFeed() {
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: '600', textTransform: 'capitalize' }}>{req.type}</div>
                 <div style={{ fontSize: '12px', color: '#8FA8C8' }}>
-                  {req.cun_lat?.toFixed(4)}, {req.cun_lng?.toFixed(4)}
+                  {Number(req.cun_lat)?.toFixed(4)}, {Number(req.cun_lng)?.toFixed(4)}
                 </div>
               </div>
               <span style={{

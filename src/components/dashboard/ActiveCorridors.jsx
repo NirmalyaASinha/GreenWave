@@ -73,7 +73,7 @@ export default function ActiveCorridors() {
               </span>
             </div>
             <div style={{ fontSize: '12px', color: '#8FA8C8', marginBottom: '8px' }}>
-              Location: {corridor.cun_lat?.toFixed(4)}, {corridor.cun_lng?.toFixed(4)}
+              Location: {Number(corridor.cun_lat)?.toFixed(4)}, {Number(corridor.cun_lng)?.toFixed(4)}
             </div>
             <button
               onClick={() => handleCancel(corridor.id)}

@@ -19,8 +19,8 @@ export function useRequests() {
               id: doc.id,
               type: data.type,
               status: data.status,
-              cun_lat: data.cun_lat,
-              cun_lng: data.cun_lng,
+              cun_lat: Number(data.cun_lat),
+              cun_lng: Number(data.cun_lng),
             }
           }),
         )
