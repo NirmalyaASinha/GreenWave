@@ -2,30 +2,14 @@ import { Navigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 
 export const ProtectedRoute = ({ children }) => {
-  const { auth } = useAuth()
+  const { user, loading } = useAuth()
 
-  if (!auth) {
+  if (loading) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: '#8FA8C8' }}>Loading...</div>
+  }
+
+  if (!user) {
     return <Navigate to="/login" replace />
-  }
-
-  return children
-}
-
-export const AdminRoute = ({ children }) => {
-  const { auth } = useAuth()
-
-  if (!auth || auth.role !== 'admin') {
-    return <Navigate to="/" replace />
-  }
-
-  return children
-}
-
-export const DispatchRoute = ({ children }) => {
-  const { auth, hasPermission } = useAuth()
-
-  if (!auth || !hasPermission('trigger')) {
-    return <Navigate to="/" replace />
   }
 
   return children

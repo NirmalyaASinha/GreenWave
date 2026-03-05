@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { collection, onSnapshot, query } from 'firebase/firestore'
 import { firestore } from '../config/firebase'
 
-export default function useRequests() {
+export function useRequests() {
   const [requests, setRequests] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -28,7 +28,7 @@ export default function useRequests() {
         setError(null)
       },
       (nextError) => {
-        setError(nextError)
+        setError(nextError.message)
         setLoading(false)
       },
     )

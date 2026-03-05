@@ -1,23 +1,17 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { useConnection } from '../contexts/ConnectionContext'
 import './Navbar.css'
 
 function Navbar() {
   const navigate = useNavigate()
-  const { auth, logout } = useAuth()
-  const { connectionState, CONNECTION_STATES } = useConnection()
+  const { user, logout } = useAuth()
 
-  const isConnected = connectionState === CONNECTION_STATES.CONNECTED
-  const statusLabel = isConnected ? 'Live' : connectionState === CONNECTION_STATES.SIMULATING ? 'Simulation' : 'Offline'
-  const statusColor = isConnected ? '#4CAF50' : connectionState === CONNECTION_STATES.SIMULATING ? '#FF9800' : '#F44336'
-
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    await logout()
     navigate('/login')
   }
 
-  if (!auth) {
+  if (!user) {
     return null
   }
 
@@ -32,33 +26,24 @@ function Navbar() {
           <ul className="navbar-menu">
             <li>
               <Link to="/" className="navbar-link">
-                Dashboard
+                Requests
               </Link>
             </li>
             <li>
               <Link to="/map" className="navbar-link">
-                Live Map
+                Map
               </Link>
             </li>
             <li>
               <Link to="/incidents" className="navbar-link">
-                Incident Log
-              </Link>
-            </li>
-            <li>
-              <Link to="/analytics" className="navbar-link">
-                Analytics
+                Incidents
               </Link>
             </li>
           </ul>
         </div>
         <div className="navbar-right">
-          <div className="connection-indicator">
-            <span className="status-dot" style={{ backgroundColor: statusColor }}></span>
-            <span className="status-label">{statusLabel}</span>
-          </div>
           <div className="user-info">
-            <span className="user-role">{auth.role.toUpperCase()}</span>
+            <span className="user-role">{user.email}</span>
             <button className="logout-btn" onClick={handleLogout}>Logout</button>
           </div>
         </div>

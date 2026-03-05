@@ -1,32 +1,66 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { AuthProvider } from './contexts/AuthContext'
-import { ToastProvider, ToastContext } from './contexts/ToastContext'
-import { ConnectionProvider } from './contexts/ConnectionContext'
+import { AuthProvider, AuthContext } from './contexts/AuthContext'
 import { ProtectedRoute } from './components/ProtectedRoute'
-import { ToastContainer } from './components/Toast'
 import Navbar from './components/Navbar'
-import Dashboard from './pages/Dashboard'
-import LiveMap from './pages/LiveMap'
-import IncidentLog from './pages/IncidentLog'
-import Analytics from './pages/Analytics'
-import Login from './pages/Login'
+import LoginPage from './pages/LoginPage'
+import RequestsPage from './pages/RequestsPage'
+import MapPage from './pages/MapPage'
+import IncidentsPage from './pages/IncidentsPage'
+import { Toaster } from 'react-hot-toast'
 import './App.css'
 import { useContext } from 'react'
 
 function AppContent() {
-  const { toasts, removeToast } = useContext(ToastContext)
+  const { user, loading } = useContext(AuthContext)
+
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        backgroundColor: '#0A1628',
+        color: '#00C853',
+        fontSize: '18px'
+      }}>
+        Initializing...
+      </div>
+    )
+  }
 
   return (
     <>
-      <ToastContainer toasts={toasts} onRemove={removeToast} />
+      <Toaster 
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: '#0F2040',
+            color: '#FFFFFF',
+            border: '1px solid #1A3560'
+          },
+          success: {
+            iconTheme: {
+              primary: '#00C853',
+              secondary: '#FFFFFF',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#F44336',
+              secondary: '#FFFFFF',
+            },
+          },
+        }}
+      />
       <Navbar />
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route
           path="/"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <RequestsPage />
             </ProtectedRoute>
           }
         />
@@ -34,7 +68,7 @@ function AppContent() {
           path="/map"
           element={
             <ProtectedRoute>
-              <LiveMap />
+              <MapPage />
             </ProtectedRoute>
           }
         />
@@ -42,19 +76,11 @@ function AppContent() {
           path="/incidents"
           element={
             <ProtectedRoute>
-              <IncidentLog />
+              <IncidentsPage />
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/analytics"
-          element={
-            <ProtectedRoute>
-              <Analytics />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to={user ? "/" : "/login"} replace />} />
       </Routes>
     </>
   )
@@ -64,11 +90,7 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <ConnectionProvider>
-          <ToastProvider>
-            <AppContent />
-          </ToastProvider>
-        </ConnectionProvider>
+        <AppContent />
       </AuthProvider>
     </Router>
   )

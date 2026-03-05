@@ -1,51 +1,32 @@
-import React, { createContext, useState, useCallback } from 'react'
+import React, { createContext, useState, useEffect } from 'react'
+import { auth } from '../config/firebase'
+import { onAuthStateChanged, signOut } from 'firebase/auth'
 
 export const AuthContext = createContext()
 
-const CREDENTIALS = {
-  'admin': 'admin123',
-  'dispatch': 'dispatch123',
-  'viewer': 'viewer123'
-}
-
-const ROLES = {
-  'admin': { permissions: ['view', 'trigger', 'admin'] },
-  'dispatch': { permissions: ['view', 'trigger'] },
-  'viewer': { permissions: ['view'] }
-}
-
 export const AuthProvider = ({ children }) => {
-  const [auth, setAuth] = useState(() => {
-    const stored = sessionStorage.getItem('greenwave_auth')
-    return stored ? JSON.parse(stored) : null
-  })
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-  const login = useCallback((username, password) => {
-    if (CREDENTIALS[username] && CREDENTIALS[username] === password) {
-      const authData = {
-        username,
-        role: username,
-        permissions: ROLES[username].permissions,
-        loginTime: new Date().toISOString()
-      }
-      sessionStorage.setItem('greenwave_auth', JSON.stringify(authData))
-      setAuth(authData)
-      return { success: true }
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser)
+      setLoading(false)
+    })
+    return unsubscribe
+  }, [])
+
+  const logout = async () => {
+    try {
+      await signOut(auth)
+      setUser(null)
+    } catch (error) {
+      console.error('Logout error:', error)
     }
-    return { success: false, error: 'Invalid credentials' }
-  }, [])
-
-  const logout = useCallback(() => {
-    sessionStorage.removeItem('greenwave_auth')
-    setAuth(null)
-  }, [])
-
-  const hasPermission = useCallback((permission) => {
-    return auth?.permissions.includes(permission) ?? false
-  }, [auth])
+  }
 
   return (
-    <AuthContext.Provider value={{ auth, login, logout, hasPermission }}>
+    <AuthContext.Provider value={{ user, loading, logout }}>
       {children}
     </AuthContext.Provider>
   )

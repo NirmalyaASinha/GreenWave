@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { collection, onSnapshot, query } from 'firebase/firestore'
 import { firestore } from '../config/firebase'
 
-export default function useHistory() {
+export function useHistory() {
   const [history, setHistory] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -22,7 +22,7 @@ export default function useHistory() {
         setError(null)
       },
       (nextError) => {
-        setError(nextError)
+        setError(nextError.message)
         setLoading(false)
       },
     )
