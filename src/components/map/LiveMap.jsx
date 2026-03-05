@@ -67,9 +67,11 @@ export default function LiveMap() {
 
   return (
     <MapContainer
+      key="dashboard-live-map"
       center={[23.0395, 72.583]}
       zoom={12}
       style={{ height: '100%', width: '100%' }}
+      scrollWheelZoom={false}
     >
       <TileLayer
         url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"

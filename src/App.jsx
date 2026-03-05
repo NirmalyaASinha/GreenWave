@@ -23,9 +23,10 @@ function AppContent() {
         height: '100vh',
         backgroundColor: '#0A1628',
         color: '#00C853',
-        fontSize: '18px'
+        fontSize: '24px',
+        fontWeight: 'bold'
       }}>
-        Initializing...
+        Initializing GreenWave...
       </div>
     )
   }

@@ -27,22 +27,21 @@ export default function RequestFeed() {
       const newPendingCount = sorted.filter(r => r.status === 'pending').length
       if (newPendingCount > prevCountRef.current && prevCountRef.current > 0) {
         playBeep()
-        const newRequest = sorted.find(r => r.status === 'pending')
-        if (newRequest && 'Notification' in window && Notification.permission === 'granted') {
-          new Notification('🚨 New Emergency Request', {
-            body: `New ${newRequest.type} request`,
-            icon: '/vite.svg'
-          })
+        // Only show notification if already granted
+        if ('Notification' in window && Notification.permission === 'granted') {
+          const newRequest = sorted.find(r => r.status === 'pending')
+          if (newRequest) {
+            new Notification('🚨 New Emergency Request', {
+              body: `New ${newRequest.type} request`,
+              icon: '/vite.svg'
+            })
+          }
         }
       }
       prevCountRef.current = newPendingCount
       
       setRequests(sorted)
     })
-    
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission()
-    }
     
     return () => unsubscribe()
   }, [])
