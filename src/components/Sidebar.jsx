@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { collection, query, where, onSnapshot } from 'firebase/firestore'
 import { ref, onValue } from 'firebase/database'
 import { firestore, database } from '../config/firebase'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../contexts/AuthContext'
 import { 
   LayoutDashboard, 
   Map, 
