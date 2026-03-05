@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { collection, query, where, onSnapshot, updateDoc, doc } from 'firebase/firestore'
 import { firestore } from '../../config/firebase'
+import { Signal, Cross, Flame, Shield, AlertTriangle, AlertOctagon, MapPin } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 export default function ActiveCorridors() {
@@ -22,14 +23,14 @@ export default function ActiveCorridors() {
   }, [])
 
   const getTypeIcon = (type) => {
-    const icons = {
-      medical: '🚑',
-      fire: '🔥',
-      police: '🚔',
-      traffic: '🚦',
-      accident: '⚠️'
+    const iconMap = {
+      medical: Cross,
+      fire: Flame,
+      police: Shield,
+      traffic: AlertTriangle,
+      accident: AlertOctagon
     }
-    return icons[type] || '📍'
+    return iconMap[type] || MapPin
   }
 
   const handleCancel = async (id) => {
@@ -42,82 +43,170 @@ export default function ActiveCorridors() {
   }
 
   return (
-    <div>
-      <h3 style={{ color: '#00C853', marginBottom: '16px' }}>Active Corridors</h3>
-      {corridors.length === 0 && (
-        <div style={{ color: '#8FA8C8', textAlign: 'center', padding: '40px 20px' }}>
-          No active corridors
-        </div>
-      )}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {corridors.map((corridor) => (
-          <div
-            key={corridor.id}
-            style={{
-              ...styles.corridorCard,
-              animation: 'pulseBorder 1.6s infinite'
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-              <span style={{ fontSize: '24px' }}>{getTypeIcon(corridor.type)}</span>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: '600', textTransform: 'capitalize' }}>
-                  {corridor.type}
-                </div>
-                <div style={{ fontSize: '11px', color: '#8FA8C8', fontFamily: 'monospace' }}>
-                  ID: {corridor.id.substring(0, 8)}
-                </div>
-              </div>
-              <span style={styles.activeBadge}>
-                ACTIVE
-              </span>
-            </div>
-            <div style={{ fontSize: '12px', color: '#8FA8C8', marginBottom: '8px' }}>
-              Location: {Number(corridor.cun_lat)?.toFixed(4)}, {Number(corridor.cun_lng)?.toFixed(4)}
-            </div>
-            <button
-              onClick={() => handleCancel(corridor.id)}
-              style={styles.btnCancel}
-            >
-              Cancel Corridor
-            </button>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      {/* Header */}
+      <div style={styles.header}>
+        <Signal size={14} />
+        <span style={styles.headerTitle}>ACTIVE CORRIDORS</span>
+        <span style={styles.headerBadge}>{corridors.length}</span>
+      </div>
+
+      {/* Body */}
+      <div style={styles.body}>
+        {corridors.length === 0 && (
+          <div style={styles.emptyState}>
+            NO ACTIVE CORRIDORS
           </div>
-        ))}
+        )}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          {corridors.map((corridor) => {
+            const IconComponent = getTypeIcon(corridor.type)
+            return (
+              <div
+                key={corridor.id}
+                style={styles.corridorCard}
+              >
+                {/* Row 1: Icon + Label + Status */}
+                <div style={styles.row}>
+                  <div style={styles.typeSection}>
+                    <IconComponent size={14} color="#2EA043" />
+                    <span style={styles.label}>CORRIDOR</span>
+                  </div>
+                  <div style={styles.activeBadge}>
+                    <span style={styles.dot}></span>
+                    <span>ACTIVE</span>
+                  </div>
+                </div>
+
+                {/* Row 2: Unit ID */}
+                <div style={styles.metaText}>
+                  <span style={styles.metaLabel}>UNIT ID:</span>{' '}
+                  <span style={styles.metaValue}>{corridor.id.substring(0, 8)}</span>
+                </div>
+
+                {/* Row 3: Location */}
+                <div style={styles.metaText}>
+                  <span style={styles.metaLabel}>LOCATION:</span>{' '}
+                  <span style={styles.metaValue}>
+                    {Number(corridor.cun_lat)?.toFixed(4)}° N  {Number(corridor.cun_lng)?.toFixed(4)}° E
+                  </span>
+                </div>
+
+                {/* Row 4: Cancel Button */}
+                <button
+                  onClick={() => handleCancel(corridor.id)}
+                  style={styles.btnCancel}
+                >
+                  CANCEL CORRIDOR
+                </button>
+              </div>
+            )
+          })}
+        </div>
       </div>
     </div>
   )
 }
 
 const styles = {
+  header: {
+    background: '#1C2128',
+    borderBottom: '1px solid #30363D',
+    padding: '10px 16px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    color: '#7D8590'
+  },
+  headerTitle: {
+    flex: 1,
+    fontSize: '11px',
+    letterSpacing: '2px',
+    fontWeight: '600'
+  },
+  headerBadge: {
+    background: '#1C2128',
+    border: '1px solid #30363D',
+    color: '#E6EDF3',
+    padding: '2px 8px',
+    borderRadius: '2px',
+    fontSize: '11px',
+    fontFamily: 'monospace'
+  },
+  body: {
+    padding: '12px',
+    flex: 1,
+    overflowY: 'auto'
+  },
+  emptyState: {
+    textAlign: 'center',
+    color: '#7D8590',
+    fontSize: '11px',
+    letterSpacing: '2px',
+    padding: '40px 20px'
+  },
   corridorCard: {
-    background: 'rgba(26, 53, 96, 0.6)',
-    border: '2px solid #00C853',
-    borderRadius: '10px',
-    padding: '16px',
-    boxShadow: '0 0 20px rgba(0, 200, 83, 0.2)',
-    transition: 'all 0.3s ease'
+    background: '#1C2128',
+    border: '1px solid #30363D',
+    borderLeft: '2px solid #2EA043',
+    borderRadius: '2px',
+    padding: '12px 14px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px'
+  },
+  row: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  typeSection: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px'
+  },
+  label: {
+    fontSize: '11px',
+    fontWeight: '700',
+    color: '#7D8590',
+    letterSpacing: '1px'
   },
   activeBadge: {
-    background: 'rgba(0, 200, 83, 0.2)',
-    color: '#00C853',
-    border: '1.5px solid #00C853',
-    padding: '5px 12px',
-    borderRadius: '20px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
     fontSize: '10px',
     fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px',
-    animation: 'pulse 1.1s infinite'
+    color: '#2EA043',
+    letterSpacing: '1px'
+  },
+  dot: {
+    width: '6px',
+    height: '6px',
+    borderRadius: '50%',
+    background: '#2EA043'
+  },
+  metaText: {
+    fontSize: '11px',
+    color: '#7D8590'
+  },
+  metaLabel: {
+    letterSpacing: '1px'
+  },
+  metaValue: {
+    color: '#79C0FF',
+    fontFamily: 'monospace'
   },
   btnCancel: {
     background: 'transparent',
-    color: '#F44336',
-    border: '1.5px solid #F44336',
-    padding: '8px 16px',
-    borderRadius: '8px',
+    color: '#DA3633',
+    border: '1px solid #DA3633',
+    padding: '6px',
+    borderRadius: '2px',
     cursor: 'pointer',
     fontWeight: '600',
-    fontSize: '12px',
+    fontSize: '11px',
+    letterSpacing: '1px',
     width: '100%',
     transition: 'all 0.2s ease'
   }

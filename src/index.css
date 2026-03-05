@@ -1,14 +1,19 @@
 :root {
-  --bg-primary: #0A1628;
-  --bg-secondary: #0f1f31;
-  --text-primary: #ffffff;
-  --text-secondary: #b0bec5;
-  --accent: #00C853;
-  --warning: #FFC107;
-  --danger: #FF5252;
-  --success: #4CAF50;
-  --border-color: #1a2332;
-  --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  /* Government Dark Theme Colors */
+  --bg-primary: #0D1117;
+  --bg-secondary: #161B22;
+  --bg-tertiary: #1C2128;
+  --border: #30363D;
+  --text-primary: #E6EDF3;
+  --text-muted: #7D8590;
+  --text-code: #79C0FF;
+  
+  /* Status Colors */
+  --green: #2EA043;
+  --red: #DA3633;
+  --orange: #D29922;
+  --blue: #1F6FEB;
+  --purple: #8957E5;
 }
 
 * {
@@ -19,8 +24,13 @@
 
 body {
   background-color: var(--bg-primary);
+  background-image:
+    linear-gradient(rgba(48, 54, 61, 0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(48, 54, 61, 0.3) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: -1px -1px;
   color: var(--text-primary);
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.5;
@@ -43,7 +53,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 a {
-  color: var(--accent);
+  color: var(--blue);
   text-decoration: none;
   transition: opacity 0.2s ease;
 }
@@ -51,9 +61,15 @@ a {
 a:hover {
   opacity: 0.8;
 }
+
+button {
+  font-family: inherit;
+}
+
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
 }
 
 @keyframes fadeIn {
@@ -128,66 +144,85 @@ button:focus-visible {
   }
 }
 
-/* Shared Card Components */
+/* Government Card Components */
 .gw-card {
-  background: rgba(15, 32, 64, 0.8);
-  backdrop-filter: blur(10px);
-  border: 1px solid #1A3560;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-}
-
-.gw-card:hover {
-  border-color: #2A5590;
-  box-shadow: 0 4px 20px rgba(0, 200, 83, 0.1);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
 .gw-card-header {
-  padding: 16px 20px;
-  border-bottom: 1px solid #1A3560;
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gw-card-title {
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--text-muted);
   font-weight: 600;
-  color: #00C853;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .gw-card-body {
-  padding: 16px 20px;
+  padding: 16px;
 }
 
+/* Government Badges */
 .gw-badge {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
+  border: 1px solid;
 }
 
 .gw-badge-success {
-  background: rgba(0, 200, 83, 0.2);
-  color: #00C853;
-  border: 1px solid #00C853;
+  background: rgba(46, 160, 67, 0.2);
+  color: var(--green);
+  border-color: var(--green);
 }
 
 .gw-badge-warning {
-  background: rgba(255, 109, 0, 0.2);
-  color: #FF6D00;
-  border: 1px solid #FF6D00;
+  background: rgba(210, 153, 34, 0.2);
+  color: var(--orange);
+  border-color: var(--orange);
 }
 
 .gw-badge-danger {
-  background: rgba(244, 67, 54, 0.2);
-  color: #F44336;
-  border: 1px solid #F44336;
+  background: rgba(218, 54, 51, 0.2);
+  color: var(--red);
+  border-color: var(--red);
 }
 
 .gw-badge-info {
-  background: rgba(142, 168, 200, 0.2);
-  color: #8FA8C8;
-  border: 1px solid #8FA8C8;
+  background: rgba(125, 133, 144, 0.2);
+  color: var(--text-muted);
+  border-color: var(--text-muted);
 }
 
-.gw-badge-pulse {
-  animation: cardGlow 2s infinite;
+/* Government Typography */
+.gw-label {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.gw-code {
+  font-family: 'Courier New', monospace;
+  color: var(--text-code);
+  font-size: 12px;
 }
 
 /* Scrollbar Styling */
@@ -197,7 +232,16 @@ button:focus-visible {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 32, 64, 0.5);
+  background: var(--bg-tertiary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }
 
 ::-webkit-scrollbar-thumb {

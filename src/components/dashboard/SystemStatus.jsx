@@ -1,18 +1,21 @@
 import { useEffect, useState } from 'react'
 import { ref, onValue } from 'firebase/database'
 import { database } from '../../config/firebase'
+import { Database, Map, Radio, ShieldCheck, Activity } from 'lucide-react'
 
 export default function SystemStatus() {
   const [firebaseConnected, setFirebaseConnected] = useState(true)
   const [mapOnline, setMapOnline] = useState(true)
   const [feedLive, setFeedLive] = useState(true)
   const [authActive, setAuthActive] = useState(true)
+  const [lastSync, setLastSync] = useState(new Date())
 
   useEffect(() => {
     if (database) {
       const connectedRef = ref(database, '.info/connected')
       const unsubscribe = onValue(connectedRef, (snapshot) => {
         setFirebaseConnected(snapshot.val() === true)
+        setLastSync(new Date())
       })
       return () => unsubscribe()
     } else {
@@ -23,44 +26,56 @@ export default function SystemStatus() {
   useEffect(() => {
     const checkMapStatus = setInterval(() => {
       setMapOnline(true)
+      setLastSync(new Date())
     }, 5000)
     
     return () => clearInterval(checkMapStatus)
   }, [])
 
-  const StatusIndicator = ({ label, active }) => (
-    <div style={styles.statusItem}>
-      <span style={{
-        ...styles.statusDot,
-        background: active ? '#00C853' : '#F44336'
-      }}>
-        {active ? '🟢' : '🔴'}
-      </span>
-      <span style={styles.statusLabel}>{label}</span>
-      <span style={styles.statusText}>{active ? 'Connected' : 'Offline'}</span>
+  const StatusRow = ({ icon: Icon, label, active }) => (
+    <div style={styles.statusRow}>
+      <div style={styles.statusLeft}>
+        <Icon size={14} />
+        <span style={styles.statusLabel}>{label}</span>
+      </div>
+      <div style={styles.statusRight}>
+        <span style={{
+          ...styles.statusDot,
+          background: active ? '#2EA043' : '#DA3633'
+        }}></span>
+        <span style={{
+          ...styles.statusText,
+          color: active ? '#2EA043' : '#DA3633'
+        }}>
+          {active ? 'OPERATIONAL' : 'OFFLINE'}
+        </span>
+      </div>
     </div>
   )
 
   return (
-    <div>
-      <h3 style={{ color: '#00C853', marginBottom: '16px' }}>System Status</h3>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        <StatusIndicator label="Firebase" active={firebaseConnected} />
-        <StatusIndicator label="Map" active={mapOnline} />
-        <StatusIndicator label="Request Feed" active={feedLive} />
-        <StatusIndicator label="Auth" active={authActive} />
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      {/* Header */}
+      <div style={styles.header}>
+        <Activity size={14} />
+        <span style={styles.headerTitle}>SYSTEM DIAGNOSTICS</span>
       </div>
-      <div style={{ 
-        marginTop: '16px', 
-        padding: '12px', 
-        background: 'rgba(0, 200, 83, 0.1)',
-        border: '1px solid #00C853',
-        borderRadius: '8px',
-        textAlign: 'center'
-      }}>
-        <div style={{ color: '#00C853', fontWeight: '600' }}>All Systems Operational</div>
-        <div style={{ color: '#8FA8C8', fontSize: '12px', marginTop: '4px' }}>
-          Last checked: {new Date().toLocaleTimeString()}
+
+      {/* Body */}
+      <div style={styles.body}>
+        <StatusRow icon={Database} label="DATABASE" active={firebaseConnected} />
+        <StatusRow icon={Map} label="CARTOGRAPHY" active={mapOnline} />
+        <StatusRow icon={Radio} label="REQUEST FEED" active={feedLive} />
+        <StatusRow icon={ShieldCheck} label="AUTHENTICATION" active={authActive} />
+        
+        <div style={{...styles.statusRow, borderBottom: 'none', marginTop: '8px'}}>
+          <div style={styles.statusLeft}>
+            <Activity size={14} />
+            <span style={styles.statusLabel}>LAST SYNC</span>
+          </div>
+          <span style={styles.timestampText}>
+            {lastSync.toLocaleTimeString('en-US', { hour12: false })}
+          </span>
         </div>
       </div>
     </div>
@@ -68,24 +83,61 @@ export default function SystemStatus() {
 }
 
 const styles = {
-  statusItem: {
+  header: {
+    background: '#1C2128',
+    borderBottom: '1px solid #30363D',
+    padding: '10px 16px',
     display: 'flex',
     alignItems: 'center',
-    gap: '12px',
-    padding: '8px',
-    background: 'rgba(26, 53, 96, 0.5)',
-    borderRadius: '6px'
+    gap: '8px',
+    color: '#7D8590'
   },
-  statusDot: {
-    fontSize: '16px'
-  },
-  statusLabel: {
+  headerTitle: {
     flex: 1,
-    color: '#FFFFFF',
+    fontSize: '11px',
+    letterSpacing: '2px',
     fontWeight: '600'
   },
+  body: {
+    padding: '12px 16px',
+    flex: 1
+  },
+  statusRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '10px 0',
+    borderBottom: '1px solid #30363D'
+  },
+  statusLeft: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    color: '#7D8590'
+  },
+  statusLabel: {
+    fontSize: '11px',
+    letterSpacing: '1px',
+    fontWeight: '600'
+  },
+  statusRight: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px'
+  },
+  statusDot: {
+    width: '6px',
+    height: '6px',
+    borderRadius: '50%'
+  },
   statusText: {
-    color: '#8FA8C8',
-    fontSize: '12px'
+    fontSize: '10px',
+    fontWeight: '700',
+    letterSpacing: '1px'
+  },
+  timestampText: {
+    fontSize: '11px',
+    color: '#79C0FF',
+    fontFamily: 'monospace'
   }
 }

@@ -4,6 +4,14 @@ import { collection, query, where, onSnapshot } from 'firebase/firestore'
 import { ref, onValue } from 'firebase/database'
 import { firestore, database } from '../config/firebase'
 import { useAuth } from '../context/AuthContext'
+import { 
+  LayoutDashboard, 
+  Map, 
+  ClipboardList, 
+  Archive, 
+  Shield,
+  LogOut
+} from 'lucide-react'
 
 export default function Sidebar() {
   const navigate = useNavigate()
@@ -35,10 +43,10 @@ export default function Sidebar() {
   }, [])
 
   const navItems = [
-    { path: '/', icon: '🏠', label: 'Dashboard' },
-    { path: '/map', icon: '🗺️', label: 'Live Map' },
-    { path: '/requests', icon: '📋', label: 'Requests' },
-    { path: '/incidents', icon: '📁', label: 'History' }
+    { path: '/', icon: LayoutDashboard, label: 'Dashboard' },
+    { path: '/map', icon: Map, label: 'Live Map' },
+    { path: '/requests', icon: ClipboardList, label: 'Requests' },
+    { path: '/incidents', icon: Archive, label: 'History' }
   ]
 
   const handleLogout = async () => {
@@ -56,15 +64,16 @@ export default function Sidebar() {
     <div style={styles.sidebar}>
       {/* Logo Section */}
       <div style={styles.logoSection}>
-        <div style={styles.logoIcon}>🚦</div>
-        <div style={styles.logoText}>GreenWave</div>
-        <div style={styles.logoSubtext}>Emergency Response</div>
+        <Shield size={32} color="#1F6FEB" strokeWidth={2.5} />
+        <div style={styles.logoText}>GREENWAVE</div>
+        <div style={styles.logoSubtext}>EMERGENCY CORRIDOR SYSTEM</div>
       </div>
 
       {/* Navigation */}
       <nav style={styles.nav}>
         {navItems.map((item) => {
           const isActive = location.pathname === item.path
+          const IconComponent = item.icon
           return (
             <button
               key={item.path}
@@ -74,8 +83,8 @@ export default function Sidebar() {
                 ...(isActive ? styles.navItemActive : {})
               }}
             >
-              <span style={styles.navIcon}>{item.icon}</span>
-              <span style={styles.navLabel}>{item.label}</span>
+              <IconComponent size={18} />
+              <span style={styles.navLabel}>{item.label.toUpperCase()}</span>
               {item.path === '/requests' && pendingCount > 0 && (
                 <span style={styles.badge}>{pendingCount}</span>
               )}
@@ -84,30 +93,38 @@ export default function Sidebar() {
         })}
       </nav>
 
+      <div style={styles.divider}></div>
+
       {/* Bottom Section */}
       <div style={styles.bottomSection}>
+        {/* System Status Label */}
+        <div style={styles.sectionLabel}>SYSTEM STATUS</div>
+        
         {/* Firebase Status */}
-        <div style={styles.statusBar}>
+        <div style={styles.statusRow}>
           <span style={{
             ...styles.statusDot,
-            background: firebaseConnected ? '#00C853' : '#F44336',
-            boxShadow: firebaseConnected ? '0 0 8px rgba(0, 200, 83, 0.6)' : '0 0 8px rgba(244, 67, 54, 0.6)'
+            background: firebaseConnected ? '#2EA043' : '#DA3633'
           }}></span>
-          <span style={styles.statusText}>
-            {firebaseConnected ? 'Connected' : 'Offline'}
+          <span style={styles.statusLabel}>FIREBASE</span>
+          <span style={styles.statusValue}>
+            {firebaseConnected ? 'ONLINE' : 'OFFLINE'}
           </span>
         </div>
 
-        {/* User Info */}
-        <div style={styles.userSection}>
-          <div style={styles.userInfo}>
-            <div style={styles.userIcon}>👤</div>
-            <div style={styles.userEmail}>{user?.email || 'User'}</div>
-          </div>
-          <button onClick={handleLogout} style={styles.logoutBtn}>
-            🚪 Logout
-          </button>
-        </div>
+        <div style={styles.divider}></div>
+
+        {/* Operator Label */}
+        <div style={styles.sectionLabel}>OPERATOR</div>
+        
+        {/* User Email */}
+        <div style={styles.userEmail}>{user?.email || 'User'}</div>
+
+        {/* Logout Button */}
+        <button onClick={handleLogout} style={styles.logoutBtn}>
+          <LogOut size={14} />
+          <span>SIGN OUT</span>
+        </button>
       </div>
     </div>
   )
@@ -120,140 +137,140 @@ const styles = {
     top: 0,
     bottom: 0,
     width: '220px',
-    background: '#0A1628',
-    borderRight: '1px solid #1A3560',
+    background: '#0D1117',
+    borderRight: '1px solid #30363D',
     display: 'flex',
     flexDirection: 'column',
     zIndex: 1000
   },
   logoSection: {
-    padding: '24px 20px',
-    borderBottom: '1px solid #1A3560',
-    textAlign: 'center'
-  },
-  logoIcon: {
-    fontSize: '36px',
-    marginBottom: '8px'
+    padding: '32px 20px 24px',
+    borderBottom: '1px solid #30363D',
+    textAlign: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '12px'
   },
   logoText: {
-    color: '#00C853',
-    fontSize: '20px',
+    color: '#E6EDF3',
+    fontSize: '14px',
     fontWeight: '700',
-    marginBottom: '4px'
+    letterSpacing: '3px'
   },
   logoSubtext: {
-    color: '#8FA8C8',
-    fontSize: '10px',
+    color: '#7D8590',
+    fontSize: '9px',
+    letterSpacing: '2px',
     textTransform: 'uppercase',
-    letterSpacing: '1px'
+    lineHeight: '1.4'
   },
   nav: {
     flex: 1,
-    padding: '20px 12px',
+    padding: '16px 12px',
     display: 'flex',
     flexDirection: 'column',
-    gap: '8px',
+    gap: '4px',
     overflowY: 'auto'
   },
   navItem: {
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
-    padding: '12px 16px',
+    padding: '10px 12px',
     background: 'transparent',
     border: 'none',
-    borderLeft: '3px solid transparent',
-    borderRadius: '8px',
-    color: '#8FA8C8',
+    borderLeft: '2px solid transparent',
+    color: '#7D8590',
     cursor: 'pointer',
     transition: 'all 0.2s ease',
-    fontSize: '14px',
-    fontWeight: '500',
+    fontSize: '12px',
+    fontWeight: '600',
     textAlign: 'left',
-    position: 'relative'
+    position: 'relative',
+    letterSpacing: '1px'
   },
   navItemActive: {
-    background: 'rgba(0, 200, 83, 0.08)',
-    borderLeftColor: '#00C853',
-    color: '#00C853'
-  },
-  navIcon: {
-    fontSize: '18px',
-    width: '24px',
-    textAlign: 'center'
+    background: 'rgba(31, 111, 235, 0.1)',
+    borderLeftColor: '#1F6FEB',
+    color: '#E6EDF3'
   },
   navLabel: {
     flex: 1
   },
   badge: {
-    background: '#FF6D00',
-    color: '#FFFFFF',
-    fontSize: '10px',
+    background: '#D29922',
+    color: '#000000',
+    fontSize: '9px',
     fontWeight: '700',
-    padding: '2px 8px',
-    borderRadius: '12px',
-    minWidth: '20px',
+    padding: '2px 6px',
+    borderRadius: '2px',
+    minWidth: '18px',
     textAlign: 'center'
   },
+  divider: {
+    borderTop: '1px solid #30363D',
+    margin: '8px 12px'
+  },
   bottomSection: {
-    borderTop: '1px solid #1A3560',
     padding: '16px'
   },
-  statusBar: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    padding: '10px 12px',
-    background: 'rgba(26, 53, 96, 0.5)',
-    borderRadius: '8px',
-    marginBottom: '12px'
-  },
-  statusDot: {
-    width: '8px',
-    height: '8px',
-    borderRadius: '50%',
-    transition: 'all 0.3s ease'
-  },
-  statusText: {
-    color: '#8FA8C8',
-    fontSize: '12px',
+  sectionLabel: {
+    fontSize: '9px',
+    letterSpacing: '2px',
+    textTransform: 'uppercase',
+    color: '#7D8590',
+    marginBottom: '12px',
     fontWeight: '600'
   },
-  userSection: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '8px'
-  },
-  userInfo: {
+  statusRow: {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
-    padding: '8px 12px',
-    background: 'rgba(26, 53, 96, 0.5)',
-    borderRadius: '8px'
+    padding: '8px 0',
+    fontSize: '11px'
   },
-  userIcon: {
-    fontSize: '16px'
+  statusDot: {
+    width: '6px',
+    height: '6px',
+    borderRadius: '50%'
+  },
+  statusLabel: {
+    color: '#7D8590',
+    fontSize: '11px',
+    fontWeight: '600',
+    letterSpacing: '1px',
+    flex: 1
+  },
+  statusValue: {
+    color: '#E6EDF3',
+    fontSize: '10px',
+    fontWeight: '600',
+    letterSpacing: '1px'
   },
   userEmail: {
-    color: '#FFFFFF',
-    fontSize: '12px',
-    fontWeight: '600',
+    color: '#79C0FF',
+    fontSize: '11px',
+    fontFamily: 'monospace',
+    marginBottom: '12px',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    flex: 1
+    whiteSpace: 'nowrap'
   },
   logoutBtn: {
     width: '100%',
-    padding: '10px',
+    padding: '8px',
     background: 'transparent',
-    border: '1px solid #F44336',
-    borderRadius: '8px',
-    color: '#F44336',
-    fontSize: '13px',
+    border: 'none',
+    color: '#DA3633',
+    fontSize: '11px',
     fontWeight: '600',
+    letterSpacing: '1px',
     cursor: 'pointer',
-    transition: 'all 0.2s ease'
+    transition: 'all 0.2s ease',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '6px'
   }
 }

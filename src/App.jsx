@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, AuthContext } from './contexts/AuthContext'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import Sidebar from './components/Sidebar'
+import TopBar from './components/TopBar'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import RequestsPage from './pages/RequestsPage'
@@ -21,12 +22,14 @@ function AppContent() {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-        backgroundColor: '#0A1628',
-        color: '#00C853',
-        fontSize: '24px',
-        fontWeight: 'bold'
+        backgroundColor: '#0D1117',
+        color: '#2EA043',
+        fontSize: '16px',
+        fontWeight: '600',
+        letterSpacing: '3px',
+        textTransform: 'uppercase'
       }}>
-        Initializing GreenWave...
+        Initializing System...
       </div>
     )
   }
@@ -37,19 +40,20 @@ function AppContent() {
         position="top-right"
         toastOptions={{
           style: {
-            background: '#0F2040',
-            color: '#FFFFFF',
-            border: '1px solid #1A3560'
+            background: '#161B22',
+            color: '#E6EDF3',
+            border: '1px solid #30363D',
+            borderRadius: '4px'
           },
           success: {
             iconTheme: {
-              primary: '#00C853',
+              primary: '#2EA043',
               secondary: '#FFFFFF',
             },
           },
           error: {
             iconTheme: {
-              primary: '#F44336',
+              primary: '#DA3633',
               secondary: '#FFFFFF',
             },
           },
@@ -57,6 +61,7 @@ function AppContent() {
       />
       {user && <Sidebar />}
       <div style={{ marginLeft: user ? '220px' : '0', minHeight: '100vh' }}>
+        {user && <TopBar />}
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route
