@@ -95,3 +95,116 @@ button:focus-visible {
     box-shadow: 0 0 0 8px rgba(0, 200, 83, 0);
   }
 }
+
+@keyframes fadeInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes cardGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 109, 0, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(255, 109, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 109, 0, 0);
+  }
+}
+
+/* Shared Card Components */
+.gw-card {
+  background: rgba(15, 32, 64, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid #1A3560;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.gw-card:hover {
+  border-color: #2A5590;
+  box-shadow: 0 4px 20px rgba(0, 200, 83, 0.1);
+}
+
+.gw-card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #1A3560;
+  font-weight: 600;
+  color: #00C853;
+}
+
+.gw-card-body {
+  padding: 16px 20px;
+}
+
+.gw-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.gw-badge-success {
+  background: rgba(0, 200, 83, 0.2);
+  color: #00C853;
+  border: 1px solid #00C853;
+}
+
+.gw-badge-warning {
+  background: rgba(255, 109, 0, 0.2);
+  color: #FF6D00;
+  border: 1px solid #FF6D00;
+}
+
+.gw-badge-danger {
+  background: rgba(244, 67, 54, 0.2);
+  color: #F44336;
+  border: 1px solid #F44336;
+}
+
+.gw-badge-info {
+  background: rgba(142, 168, 200, 0.2);
+  color: #8FA8C8;
+  border: 1px solid #8FA8C8;
+}
+
+.gw-badge-pulse {
+  animation: cardGlow 2s infinite;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 32, 64, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1A3560;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2A5590;
+}

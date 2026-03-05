@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, AuthContext } from './contexts/AuthContext'
 import { ProtectedRoute } from './components/ProtectedRoute'
-import Navbar from './components/Navbar'
+import Sidebar from './components/Sidebar'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import RequestsPage from './pages/RequestsPage'
@@ -55,43 +55,45 @@ function AppContent() {
           },
         }}
       />
-      <Navbar />
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <DashboardPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/requests"
-          element={
-            <ProtectedRoute>
-              <RequestsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/map"
-          element={
-            <ProtectedRoute>
-              <MapPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/incidents"
-          element={
-            <ProtectedRoute>
-              <IncidentsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="*" element={<Navigate to={user ? "/" : "/login"} replace />} />
-      </Routes>
+      {user && <Sidebar />}
+      <div style={{ marginLeft: user ? '220px' : '0', minHeight: '100vh' }}>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/requests"
+            element={
+              <ProtectedRoute>
+                <RequestsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/map"
+            element={
+              <ProtectedRoute>
+                <MapPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/incidents"
+            element={
+              <ProtectedRoute>
+                <IncidentsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to={user ? "/" : "/login"} replace />} />
+        </Routes>
+      </div>
     </>
   )
 }

@@ -90,29 +90,35 @@ export default function ActiveCorridors() {
 
 const styles = {
   corridorCard: {
-    background: 'rgba(26, 53, 96, 0.5)',
+    background: 'rgba(26, 53, 96, 0.6)',
     border: '2px solid #00C853',
-    borderRadius: '8px',
-    padding: '12px'
+    borderRadius: '10px',
+    padding: '16px',
+    boxShadow: '0 0 20px rgba(0, 200, 83, 0.2)',
+    transition: 'all 0.3s ease'
   },
   activeBadge: {
-    background: '#00C853',
-    color: '#000',
-    padding: '4px 8px',
-    borderRadius: '6px',
+    background: 'rgba(0, 200, 83, 0.2)',
+    color: '#00C853',
+    border: '1.5px solid #00C853',
+    padding: '5px 12px',
+    borderRadius: '20px',
     fontSize: '10px',
     fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
     animation: 'pulse 1.1s infinite'
   },
   btnCancel: {
-    background: '#F44336',
-    color: '#fff',
-    border: 'none',
-    padding: '6px 12px',
-    borderRadius: '6px',
+    background: 'transparent',
+    color: '#F44336',
+    border: '1.5px solid #F44336',
+    padding: '8px 16px',
+    borderRadius: '8px',
     cursor: 'pointer',
     fontWeight: '600',
     fontSize: '12px',
-    width: '100%'
+    width: '100%',
+    transition: 'all 0.2s ease'
   }
 }

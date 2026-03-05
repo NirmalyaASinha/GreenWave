@@ -156,7 +156,8 @@ export default function RequestFeed() {
               </div>
               <span style={{
                 ...styles.statusBadge,
-                background: getStatusColor(req.status)
+                color: getStatusColor(req.status),
+                borderColor: getStatusColor(req.status)
               }}>
                 {req.status}
               </span>
@@ -196,46 +197,56 @@ export default function RequestFeed() {
 
 const styles = {
   requestCard: {
-    background: 'rgba(26, 53, 96, 0.5)',
-    borderRadius: '8px',
-    padding: '12px',
+    background: 'rgba(26, 53, 96, 0.6)',
+    borderRadius: '10px',
+    padding: '16px',
+    border: '1px solid #1A3560',
+    transition: 'all 0.3s ease'
   },
   statusBadge: {
-    padding: '4px 8px',
-    borderRadius: '6px',
-    fontSize: '11px',
-    fontWeight: '600',
+    padding: '5px 12px',
+    borderRadius: '20px',
+    fontSize: '10px',
+    fontWeight: '700',
     textTransform: 'uppercase',
-    color: '#fff'
+    letterSpacing: '0.5px',
+    border: '1.5px solid',
+    backgroundColor: 'transparent'
   },
   btnApprove: {
-    background: '#00C853',
-    color: '#fff',
-    border: 'none',
-    padding: '6px 12px',
-    borderRadius: '6px',
+    background: 'transparent',
+    color: '#00C853',
+    border: '1.5px solid #00C853',
+    padding: '8px 16px',
+    borderRadius: '8px',
     cursor: 'pointer',
     fontWeight: '600',
-    fontSize: '12px'
+    fontSize: '12px',
+    transition: 'all 0.2s ease',
+    flex: 1
   },
   btnReject: {
-    background: '#F44336',
-    color: '#fff',
-    border: 'none',
-    padding: '6px 12px',
-    borderRadius: '6px',
+    background: 'transparent',
+    color: '#F44336',
+    border: '1.5px solid #F44336',
+    padding: '8px 16px',
+    borderRadius: '8px',
     cursor: 'pointer',
     fontWeight: '600',
-    fontSize: '12px'
+    fontSize: '12px',
+    transition: 'all 0.2s ease',
+    flex: 1
   },
   btnResolve: {
-    background: '#9E9E9E',
-    color: '#fff',
-    border: 'none',
-    padding: '6px 12px',
-    borderRadius: '6px',
+    background: 'transparent',
+    color: '#8FA8C8',
+    border: '1.5px solid #8FA8C8',
+    padding: '8px 16px',
+    borderRadius: '8px',
     cursor: 'pointer',
     fontWeight: '600',
-    fontSize: '12px'
+    fontSize: '12px',
+    width: '100%',
+    transition: 'all 0.2s ease'
   }
 }
