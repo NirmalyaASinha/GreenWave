@@ -7,7 +7,22 @@ import 'leaflet/dist/leaflet.css'
 
 export default function LiveMap() {
   const [requests, setRequests] = useState([])
-  const mapRef = useRef(null)
+  const [mapReady, setMapReady] = useState(false)
+  const mapInitialized = useRef(false)
+
+  useEffect(() => {
+    // Ensure map renders only once mounted
+    const timer = setTimeout(() => setMapReady(true), 100)
+    return () => {
+      clearTimeout(timer)
+      setMapReady(false)
+      // Cleanup map container
+      const container = document.getElementById('livemap-container')
+      if (container && container._leaflet_id) {
+        container._leaflet_id = null
+      }
+    }
+  }, [])
 
   useEffect(() => {
     const requestsRef = collection(firestore, 'Request')
@@ -88,15 +103,33 @@ export default function LiveMap() {
     )
   }
 
+  if (!mapReady) {
+    return (
+      <div style={{ 
+        height: '400px', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        background: 'rgba(15, 32, 64, 0.8)',
+        borderRadius: '8px',
+        color: '#8FA8C8'
+      }}>
+        Loading map...
+      </div>
+    )
+  }
+
   return (
-    <div style={{ height: '400px', borderRadius: '8px', overflow: 'hidden' }} id="live-map-container">
-      <MapContainer
-        key="live-map"
-        center={[23.0395, 72.583]}
-        zoom={12}
-        style={{ height: '100%', width: '100%' }}
-        scrollWheelZoom={false}
-      >
+    <div id="livemap-container" style={{ height: '400px', borderRadius: '8px', overflow: 'hidden' }}>
+      {!mapInitialized.current && (
+        <MapContainer
+          key="greenwave-livemap"
+          center={[23.0395, 72.583]}
+          zoom={12}
+          style={{ height: '100%', width: '100%' }}
+          scrollWheelZoom={false}
+          whenCreated={() => { mapInitialized.current = true }}
+        >
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
           attribution='&copy; OpenStreetMap contributors &copy; CartoDB'
@@ -179,6 +212,7 @@ export default function LiveMap() {
             />
           ))}
       </MapContainer>
+      )}
     </div>
   )
 }

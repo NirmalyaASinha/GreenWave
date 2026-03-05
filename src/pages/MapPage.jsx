@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import { MapContainer, TileLayer, CircleMarker, Popup, Polyline } from 'react-leaflet'
 import { useRequests } from '../hooks/useRequests'
 import { updateDoc, doc } from 'firebase/firestore'
@@ -7,32 +7,21 @@ import toast from 'react-hot-toast'
 import { motion } from 'framer-motion'
 import 'leaflet/dist/leaflet.css'
 
-const MapPage = () => {
+function MapPage() {
   const { requests, loading, error } = useRequests()
   const [selectedType, setSelectedType] = useState('all')
   const [selectedStatus, setSelectedStatus] = useState('all')
+  const mapInitialized = useRef(false)
 
-  const getTypeColor = (type) => {
-    const colors = {
-      'medical': '#F44336',
-      'fire': '#FF6D00',
-      'police': '#2962FF',
-      'traffic': '#FFC107',
-      'accident': '#9C27B0'
+  useEffect(() => {
+    return () => {
+      // Cleanup map container
+      const container = document.getElementById('mappage-container')
+      if (container && container._leaflet_id) {
+        container._leaflet_id = null
+      }
     }
-    return colors[type] || '#8FA8C8'
-  }
-
-  const getTypeIcon = (type) => {
-    const icons = {
-      medical: '🚑',
-      fire: '🔥',
-      police: '🚔',
-      traffic: '🚦',
-      accident: '⚠️'
-    }
-    return icons[type] || '📍'
-  }
+  }, [])
 
   const handleStatusUpdate = async (id, status) => {
     try {
@@ -43,47 +32,77 @@ const MapPage = () => {
     }
   }
 
-  if (loading) return (
-    <div style={{ padding: '40px', textAlign: 'center', color: '#8FA8C8' }}>
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-        style={{ display: 'inline-block', fontSize: '32px' }}
-      >
-        ⚙️
-      </motion.div>
-      <div style={{ marginTop: '16px' }}>Loading map...</div>
-    </div>
-  )
-  if (error) return <div style={{ padding: '40px', color: '#F44336' }}>Error: {error}</div>
+  const getTypeColor = (type) => {
+    switch(type) {
+      case 'medical': return '#F44336'
+      case 'fire': return '#FF6D00'
+      case 'police': return '#2962FF'
+      case 'traffic': return '#FFC107'
+      case 'accident': return '#9C27B0'
+      default: return '#8FA8C8'
+    }
+  }
 
-  const validRequests = requests.filter(
-    req => typeof req.cun_lat === 'number' && 
-            typeof req.cun_lng === 'number' && 
-            !isNaN(req.cun_lat) && 
-            !isNaN(req.cun_lng) &&
-            (selectedType === 'all' || req.type === selectedType) &&
-            (selectedStatus === 'all' || req.status === selectedStatus)
-  )
+  const getTypeIcon = (type) => {
+    switch(type) {
+      case 'medical': return '🚑'
+      case 'fire': return '🔥'
+      case 'police': return '🚔'
+      case 'traffic': return '🚦'
+      case 'accident': return '⚠️'
+      default: return '📍'
+    }
+  }
 
-  const stats = requests.reduce((acc, req) => {
-    acc[req.type] = (acc[req.type] || 0) + 1
-    return acc
-  }, {})
+  const validRequests = useMemo(() => {
+    return requests.filter(req => 
+      !isNaN(req.cun_lat) && 
+      !isNaN(req.cun_lng) &&
+      (selectedType === 'all' || req.type === selectedType) &&
+      (selectedStatus === 'all' || req.status === selectedStatus)
+    )
+  }, [requests, selectedType, selectedStatus])
+
+  const stats = useMemo(() => {
+    return requests.reduce((acc, req) => {
+      acc[req.type] = (acc[req.type] || 0) + 1
+      return acc
+    }, {})
+  }, [requests])
+
+  if (loading) {
+    return (
+      <div style={styles.loadingContainer}>
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+          style={{ display: 'inline-block', fontSize: '32px' }}
+        >
+          ⚙️
+        </motion.div>
+        <div style={{ marginTop: '16px' }}>Loading map...</div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return <div style={styles.errorContainer}>Error: {error}</div>
+  }
 
   return (
-    <div style={{ height: 'calc(100vh - 80px)', position: 'relative', display: 'flex' }}>
+    <div style={styles.container}>
+      {/* Sidebar */}
       <motion.div 
         initial={{ x: -300 }}
         animate={{ x: 0 }}
+        transition={{ duration: 0.3 }}
         style={styles.sidebar}
       >
-        <h3 style={{ color: '#00C853', marginBottom: '20px' }}>Map Filters</h3>
+        <h3 style={styles.sidebarTitle}>Map Filters</h3>
         
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ color: '#8FA8C8', fontSize: '12px', display: 'block', marginBottom: '8px' }}>
-            Filter by Type
-          </label>
+        {/* Type Filter */}
+        <div style={styles.filterGroup}>
+          <label style={styles.label}>Filter by Type</label>
           <select 
             value={selectedType} 
             onChange={(e) => setSelectedType(e.target.value)}
@@ -98,10 +117,9 @@ const MapPage = () => {
           </select>
         </div>
 
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ color: '#8FA8C8', fontSize: '12px', display: 'block', marginBottom: '8px' }}>
-            Filter by Status
-          </label>
+        {/* Status Filter */}
+        <div style={styles.filterGroup}>
+          <label style={styles.label}>Filter by Status</label>
           <select 
             value={selectedStatus} 
             onChange={(e) => setSelectedStatus(e.target.value)}
@@ -115,37 +133,46 @@ const MapPage = () => {
           </select>
         </div>
 
-        <div style={styles.legendCard}>
-          <h4 style={{ color: '#00C853', marginBottom: '12px', fontSize: '14px' }}>Legend</h4>
-          {Object.entries({ medical: '#F44336', fire: '#FF6D00', police: '#2962FF', traffic: '#FFC107', accident: '#9C27B0' }).map(([type, color]) => (
-            <div key={type} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-              <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: color }}></div>
-              <span style={{ color: '#FFFFFF', fontSize: '12px', textTransform: 'capitalize' }}>{type}</span>
+        {/* Legend */}
+        <div style={styles.card}>
+          <h4 style={styles.cardTitle}>Legend</h4>
+          {['medical', 'fire', 'police', 'traffic', 'accident'].map(type => (
+            <div key={type} style={styles.legendItem}>
+              <div style={{ ...styles.legendDot, background: getTypeColor(type) }} />
+              <span style={styles.legendText}>{type}</span>
             </div>
           ))}
         </div>
 
-        <div style={styles.statsCard}>
-          <h4 style={{ color: '#00C853', marginBottom: '12px', fontSize: '14px' }}>Statistics</h4>
-          <div style={{ color: '#8FA8C8', fontSize: '12px' }}>
+        {/* Statistics */}
+        <div style={styles.card}>
+          <h4 style={styles.cardTitle}>Statistics</h4>
+          <div style={styles.statText}>
             <div>Showing: {validRequests.length} / {requests.length}</div>
-            <div>Active Corridors: {requests.filter(r => r.status === 'approved').length}</div>
+            <div style={{ marginTop: '8px' }}>
+              Active Corridors: {requests.filter(r => r.status === 'approved').length}
+            </div>
           </div>
         </div>
       </motion.div>
 
-      <div style={{ flex: 1 }} id="map-page-container">
-        <MapContainer
-          key="map-page"
-          center={[23.0395, 72.583]}
-          zoom={12}
-          style={{ height: '100%', width: '100%' }}
-        >
+      {/* Map Container */}
+      <div id="mappage-container" style={styles.mapWrapper}>
+        {!mapInitialized.current && (
+          <MapContainer
+            key="greenwave-mappage"
+            center={[23.0395, 72.583]}
+            zoom={12}
+            style={{ height: '100%', width: '100%' }}
+            scrollWheelZoom={true}
+            whenCreated={() => { mapInitialized.current = true }}
+          >
           <TileLayer
             url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
             attribution='&copy; OpenStreetMap contributors &copy; CartoDB'
           />
           
+          {/* Request Markers */}
           {validRequests.map((req) => (
             <CircleMarker
               key={req.id}
@@ -158,52 +185,51 @@ const MapPage = () => {
               fillOpacity={0.8}
             >
               <Popup>
-                <div style={{ color: '#000', minWidth: '220px' }}>
-                  <div style={{ fontSize: '20px', marginBottom: '8px', fontWeight: 'bold' }}>
+                <div style={styles.popup}>
+                  <div style={styles.popupTitle}>
                     {getTypeIcon(req.type)} {req.type.toUpperCase()}
                   </div>
+                  
                   <div style={{ marginBottom: '8px' }}>
-                    <span style={{ 
+                    <span style={{
+                      ...styles.statusBadge,
                       background: req.status === 'approved' ? '#00C853' : 
                                  req.status === 'pending' ? '#FF6D00' : 
-                                 req.status === 'rejected' ? '#F44336' : '#9E9E9E',
-                      color: '#fff',
-                      padding: '4px 8px',
-                      borderRadius: '4px',
-                      fontSize: '11px',
-                      fontWeight: 'bold',
-                      textTransform: 'uppercase'
+                                 req.status === 'rejected' ? '#F44336' : '#9E9E9E'
                     }}>
                       {req.status}
                     </span>
                   </div>
-                  <div style={{ fontSize: '11px', color: '#666', marginBottom: '8px' }}>
+                  
+                  <div style={styles.popupInfo}>
                     <div><strong>ID:</strong> {req.id.substring(0, 8)}...</div>
-                    <div><strong>Latitude:</strong> {req.cun_lat.toFixed(6)}</div>
-                    <div><strong>Longitude:</strong> {req.cun_lng.toFixed(6)}</div>
+                    <div><strong>Lat:</strong> {req.cun_lat.toFixed(6)}</div>
+                    <div><strong>Lng:</strong> {req.cun_lng.toFixed(6)}</div>
                   </div>
+                  
                   {req.status === 'pending' && (
-                    <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+                    <div style={styles.popupActions}>
                       <button
                         onClick={() => handleStatusUpdate(req.id, 'approved')}
-                        style={{ ...styles.popupBtn, background: '#00C853' }}
+                        style={{ ...styles.actionBtn, background: '#00C853' }}
                       >
                         ✓ Approve
                       </button>
                       <button
                         onClick={() => handleStatusUpdate(req.id, 'rejected')}
-                        style={{ ...styles.popupBtn, background: '#F44336' }}
+                        style={{ ...styles.actionBtn, background: '#F44336' }}
                       >
                         ✕ Reject
                       </button>
                     </div>
                   )}
+                  
                   {req.status === 'approved' && (
                     <button
                       onClick={() => handleStatusUpdate(req.id, 'resolved')}
-                      style={{ ...styles.popupBtn, background: '#9E9E9E', width: '100%', marginTop: '12px' }}
+                      style={{ ...styles.actionBtn, background: '#9E9E9E', width: '100%', marginTop: '12px' }}
                     >
-                      ✔ Mark Resolved
+                      ✔ Resolve
                     </button>
                   )}
                 </div>
@@ -211,6 +237,7 @@ const MapPage = () => {
             </CircleMarker>
           ))}
 
+          {/* Green Corridors */}
           {validRequests
             .filter(req => req.status === 'approved')
             .map(req => (
@@ -225,21 +252,55 @@ const MapPage = () => {
                 opacity={0.8}
                 dashArray="10, 10"
               />
-            ))}
+            ))
+          }
         </MapContainer>
+        )}
       </div>
     </div>
   )
 }
 
 const styles = {
+  container: {
+    height: 'calc(100vh - 80px)',
+    position: 'relative',
+    display: 'flex',
+    overflow: 'hidden'
+  },
+  loadingContainer: {
+    padding: '40px',
+    textAlign: 'center',
+    color: '#8FA8C8'
+  },
+  errorContainer: {
+    padding: '40px',
+    color: '#F44336'
+  },
   sidebar: {
     width: '320px',
     background: 'rgba(10, 22, 40, 0.95)',
     borderRight: '1px solid #1A3560',
     padding: '24px',
     overflowY: 'auto',
-    backdropFilter: 'blur(10px)'
+    backdropFilter: 'blur(10px)',
+    flexShrink: 0
+  },
+  sidebarTitle: {
+    color: '#00C853',
+    marginBottom: '20px',
+    fontSize: '18px',
+    fontWeight: '600'
+  },
+  filterGroup: {
+    marginBottom: '20px'
+  },
+  label: {
+    color: '#8FA8C8',
+    fontSize: '12px',
+    display: 'block',
+    marginBottom: '8px',
+    fontWeight: '500'
   },
   select: {
     width: '100%',
@@ -250,22 +311,75 @@ const styles = {
     color: '#FFFFFF',
     fontSize: '13px',
     cursor: 'pointer',
-    outline: 'none'
+    outline: 'none',
+    transition: 'border-color 0.2s'
   },
-  legendCard: {
+  card: {
     background: 'rgba(15, 32, 64, 0.8)',
     border: '1px solid #1A3560',
     borderRadius: '8px',
     padding: '16px',
     marginBottom: '20px'
   },
-  statsCard: {
-    background: 'rgba(15, 32, 64, 0.8)',
-    border: '1px solid #1A3560',
-    borderRadius: '8px',
-    padding: '16px'
+  cardTitle: {
+    color: '#00C853',
+    marginBottom: '12px',
+    fontSize: '14px',
+    fontWeight: '600'
   },
-  popupBtn: {
+  legendItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    marginBottom: '8px'
+  },
+  legendDot: {
+    width: '16px',
+    height: '16px',
+    borderRadius: '50%'
+  },
+  legendText: {
+    color: '#FFFFFF',
+    fontSize: '12px',
+    textTransform: 'capitalize'
+  },
+  statText: {
+    color: '#8FA8C8',
+    fontSize: '12px'
+  },
+  mapWrapper: {
+    flex: 1,
+    position: 'relative'
+  },
+  popup: {
+    color: '#000',
+    minWidth: '220px'
+  },
+  popupTitle: {
+    fontSize: '18px',
+    marginBottom: '8px',
+    fontWeight: 'bold'
+  },
+  statusBadge: {
+    color: '#fff',
+    padding: '4px 8px',
+    borderRadius: '4px',
+    fontSize: '11px',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    display: 'inline-block'
+  },
+  popupInfo: {
+    fontSize: '11px',
+    color: '#666',
+    marginBottom: '8px'
+  },
+  popupActions: {
+    display: 'flex',
+    gap: '8px',
+    marginTop: '12px'
+  },
+  actionBtn: {
     border: 'none',
     color: '#fff',
     padding: '8px 12px',
@@ -273,7 +387,8 @@ const styles = {
     cursor: 'pointer',
     fontWeight: '600',
     fontSize: '12px',
-    flex: 1
+    flex: 1,
+    transition: 'opacity 0.2s'
   }
 }
 
