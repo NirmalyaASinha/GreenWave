@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { MapContainer, TileLayer, CircleMarker, Popup, Polyline } from 'react-leaflet'
 import { collection, onSnapshot, updateDoc, doc } from 'firebase/firestore'
 import { firestore } from '../../config/firebase'
@@ -7,6 +7,7 @@ import 'leaflet/dist/leaflet.css'
 
 export default function LiveMap() {
   const [requests, setRequests] = useState([])
+  const mapRef = useRef(null)
 
   useEffect(() => {
     const requestsRef = collection(firestore, 'Request')
@@ -65,20 +66,39 @@ export default function LiveMap() {
     }
   }
 
+  if (!requests || requests.length === 0) {
+    return (
+      <div style={{ 
+        height: '400px', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        background: 'rgba(15, 32, 64, 0.8)',
+        borderRadius: '8px',
+        color: '#8FA8C8'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>🗺️</div>
+          <div>No active requests to display</div>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <MapContainer
-      key="dashboard-live-map"
-      center={[23.0395, 72.583]}
-      zoom={12}
-      style={{ height: '100%', width: '100%' }}
-      scrollWheelZoom={false}
-    >
-      <TileLayer
-        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-        attribution='&copy; OpenStreetMap contributors &copy; CartoDB'
-      />
-      
-      {requests.map((req) => (
+    <div style={{ height: '400px', borderRadius: '8px', overflow: 'hidden' }} id="live-map-container">
+      <MapContainer
+        center={[23.0395, 72.583]}
+        zoom={12}
+        style={{ height: '100%', width: '100%' }}
+        scrollWheelZoom={false}
+      >
+        <TileLayer
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          attribution='&copy; OpenStreetMap contributors &copy; CartoDB'
+        />
+        
+        {requests.map((req) => (
         <CircleMarker
           key={req.id}
           center={[req.cun_lat, req.cun_lng]}
@@ -143,17 +163,18 @@ export default function LiveMap() {
         </CircleMarker>
       ))}
 
-      {requests
-        .filter(req => req.status === 'approved')
-        .map(req => (
-          <Polyline
-            key={`line-${req.id}`}
-            positions={[[req.cun_lat, req.cun_lng], [req.cun_lat + 0.01, req.cun_lng + 0.01]]}
-            color="#00C853"
-            weight={3}
-            opacity={0.7}
-          />
-        ))}
-    </MapContainer>
+        {requests
+          .filter(req => req.status === 'approved')
+          .map(req => (
+            <Polyline
+              key={`line-${req.id}`}
+              positions={[[req.cun_lat, req.cun_lng], [req.cun_lat + 0.01, req.cun_lng + 0.01]]}
+              color="#00C853"
+              weight={3}
+              opacity={0.7}
+            />
+          ))}
+      </MapContainer>
+    </div>
   )
 }
