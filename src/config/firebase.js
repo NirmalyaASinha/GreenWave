@@ -5,14 +5,14 @@ import { getAuth } from 'firebase/auth'
 import { getAnalytics, isSupported } from 'firebase/analytics'
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+  apiKey: "AIzaSyAqmnY4i0SJ4ImtLMFcme8m1NH2siFD3pw",
+  authDomain: "greenwave-e1768.firebaseapp.com",
+  databaseURL: "https://greenwave-e1768-default-rtdb.firebaseio.com",
+  projectId: "greenwave-e1768",
+  storageBucket: "greenwave-e1768.firebasestorage.app",
+  messagingSenderId: "10111045068",
+  appId: "1:10111045068:web:ca9e7baa45c3772129a169",
+  measurementId: "G-3BL3HXW0LB",
 }
 
 export const app = initializeApp(firebaseConfig)
